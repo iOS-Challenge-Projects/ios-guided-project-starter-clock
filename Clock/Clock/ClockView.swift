@@ -152,23 +152,42 @@ class ClockView: UIView {
             context.fillPath()
             
             // second hand
+            context.setStrokeColor(seconds.color.cgColor)
+            context.beginPath()
+            context.move(to: clockCenter)
+            context.addLine(to: secondHandEndPoint)
+            context.setLineWidth(seconds.width)
+            context.strokePath()
             
             // second's center
+            let smallDotRadius: CGFloat = 3.0
+            let secondsCircleRect = CGRect(x: clockCenter.x - smallDotRadius, y: clockCenter.y - smallDotRadius, width: 2 * smallDotRadius, height: 2 * smallDotRadius)
+            context.addEllipse(in: secondsCircleRect)
+            context.setFillColor(seconds.color.cgColor)
+            context.fillPath()
             
         }
     }
     
     @objc func timerFired(_ sender: CADisplayLink) {
         // Get current time
-        
+        let currentTime = Date()
+    
         // Get calendar and set timezone
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timezone!
         
         // Extract hour, minute, second components from current time
+        let timeComponents = calendar.dateComponents([.hour,.minute, .second], from: currentTime)
         
         // Set above components to hours, minutes, seconds properties
+        hours.value = timeComponents.hour ?? 0
+        minutes.value = timeComponents.minute ?? 0
+        seconds.value = timeComponents.second ?? 0
+        
         
         // Trigger a screen refresh
-        
+        setNeedsDisplay()
     }
     
     deinit {
